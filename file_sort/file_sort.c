@@ -7,8 +7,6 @@ int compare(const void* , const void*);
 
 int main (int argc, char** argv)
 {
-    printf("123\n %d \n124",argc);
-
     int err,count = 0;
     int a[MAX_SIZE];
 
