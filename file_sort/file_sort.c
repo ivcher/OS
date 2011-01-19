@@ -19,23 +19,22 @@ int main (int argc, char** argv)
     int i;
     for(i = 1; i < argc-1; i++)
     {    fin = fopen(argv[i],"r");
-         if(!fin)
-         {
-             return 1; //error - not file
-         }                
-         while(!feof(fin))
-         {   err = fscanf(fin,"%d",&a[count]);
-             if(!err)
-             {   close(fin);
-                 return 1;         
-             }
-             count ++;
-             if (count > MAX_SIZE)
-             {    close(fin);
-                  return 1;
-             }             
+         if(fin)
+         {      while(!feof(fin))
+                {   err = fscanf(fin,"%d",&a[count]);
+                    if(!err)
+                    {    close(fin);
+                    return 1;         
+                    }
+                    count ++;
+                    if (count > MAX_SIZE)
+                    {    close(fin);
+                     return 1;
+                     }
+                }
+                fclose(fin);         
+              
          }
-         fclose(fin);         
     }   
     qsort(a,count,sizeof(int),compare);
     fout = fopen(argv[argc-1],"w");
