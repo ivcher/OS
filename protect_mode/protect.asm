@@ -50,9 +50,8 @@ _start:
 
 _1:
 	sti
-	int	13
-	cli
-	hlt
+;	int	13
+	int 14
 
 _error:
 	mov	ax, 01301h
@@ -93,11 +92,14 @@ print:
 	mov	es, ax
 	xor	di, di
 	mov	ds, di
-	mov	al, 02h
+	mov	al, 0ah
 _print_ckl:
 	movsb
 	stosb
 	loop	_print_ckl
+	
+	cli
+	hlt
 	
 	pop	es
 	pop	ds
