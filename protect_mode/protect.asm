@@ -24,7 +24,7 @@ text_error 		db 	'Error.'
 len_error	dw	$ - text_error
 
 text_int13 db 'It is int 13!'
-len_int13	dw	13;$ - text_int13
+len_int13	dw	$ - text_int13
 		
 _start:	
 	mov	ax, 0204h
