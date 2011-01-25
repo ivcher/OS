@@ -26,8 +26,8 @@ len_error	dw	$ - text_error
 text_int13 db 'It is int 13!'
 len_int13	dw	$ - text_int13
 
-text_int13 db 'It is int 9!'
-len_int13	dw	$ - text_int9
+text_int9 db 'It is int 9!'
+len_int9	dw	$ - text_int9
 
 		
 _start:	
