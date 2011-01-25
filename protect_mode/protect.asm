@@ -40,15 +40,16 @@ _start:
 	mov	eax, cr0
 	or	al, 01h
 	mov	cr0, eax
-	
+
+	jmp	08h:_1
+
+_1:	
 	xor	ax, ax
 	mov	ds, ax
 	mov	es, ax
 	mov	ax, 8 * 2
 	mov	ss, ax
-	jmp	08h:_1
 
-_1:
 	sti
 ;	int	13
 	int 14
