@@ -71,8 +71,7 @@ _1:
 	
 _2:
 ;	int	13
-	int 14
-;	int 55
+;	int 14
 	jmp	_2
 	
 _error:
@@ -121,8 +120,9 @@ print:
 	push	es
 	mov	ax, 8 * 3
 	mov	es, ax
-	xor	di, di
-	mov	ds, di
+;	xor	di, di
+	mov	ax,0
+	mov	ds, ax
 	mov	al, 0ah
 _print_ckl:
 	movsb
