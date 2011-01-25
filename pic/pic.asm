@@ -25,6 +25,10 @@ len_error	dw	$ - text_error
 
 text_int13 db 'It is int 13!'
 len_int13	dw	$ - text_int13
+
+text_int13 db 'It is int 9!'
+len_int13	dw	$ - text_int9
+
 		
 _start:	
 	mov	ax, 0204h
@@ -101,6 +105,15 @@ int_13:
 	pop	si
 	pop	cx
 	iret
+int_9:
+	push	cx
+	push	si
+	mov	cx, [len_int9]
+	mov	si, text_int9
+	call	print
+	pop	si
+	pop	cx
+	iret
 
 print:
 	push	di
@@ -116,8 +129,8 @@ _print_ckl:
 	stosb
 	loop	_print_ckl
 	
-	cli
-	hlt
+;	cli
+;	hlt
 	
 	pop	es
 	pop	ds
@@ -134,13 +147,21 @@ buffer:
 		db	055h, 0AAh
 
 IDT:
-		%rep 13
+		%rep 9
 			dw	int_all
 			dw	08h
 			db 	00h, 10000110b, 00h, 00h
 
 		%endrep
+			dw int_9
+			dw 08h
+			db 00h, 10000110b, 00h, 00h
+		%rep 3
+			dw	int_all
+			dw	08h
+			db 	00h, 10000110b, 00h, 00h
 
+		%endrep
 			dw int_13
 			dw 08h
 			db 00h, 10000110b, 00h, 00h
