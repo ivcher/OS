@@ -16,16 +16,12 @@ gdt_table:
 idt_table:
 	dw	256 * 8
 	dd	buffer
-flag	dw	0
 	
 text_all db 'This int, but not 13.'
 len_all	dw	$ - text_all
 
 text_error 		db 	'Error.'
 len_error	dw	$ - text_error
-
-text_int13 db 'It is int 13!'
-len_int13	dw	$ - text_int13
 
 text_int9 db 'It is int 9!'
 len_int9	dw	$ - text_int9
@@ -73,16 +69,12 @@ _1:
 	mov	al, 11111101b	; disable mask
 	out	21h, al
 	sti
-	
-_2:
-;	int	13
+_2:	
+	int	13
 ;	int 14
-	mov	ax,flag
-	cmp	 ax,1
-	je	_2
-	mov	[flag],ax
-	int 8
-	jmp	_2
+;	int 8
+
+	jmp	short $	;zaciklivanie
 	
 _error:
 	mov	ax, 01301h
@@ -112,20 +104,11 @@ int_s_kodom_oshibki:
 	call	print
 	pop	si
 	pop	cx
-	pop	ax		; kod oshibki... 
+;	pop	ax		; kod oshibki... chet ne to...
 				;15-3 - ,biti selectora, vizvavshego int
 				;2 - TI, 1 esli prichia v LDT , 0 - GDT
 				;1 - IDT, 1 esli prichina - descriptor v IDT
 				;0 - EXT, 1 esli pichina - apparatnoe prerivanie
-	iret
-int_13:
-	push	cx
-	push	si
-	mov	cx, [len_int13]
-	mov	si, text_int13
-	call	print
-	pop	si
-	pop	cx
 	iret
 int_9:
 	push	cx
