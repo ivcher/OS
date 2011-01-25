@@ -16,7 +16,8 @@ gdt_table:
 idt_table:
 	dw	256 * 8
 	dd	buffer
-
+flag	dw	0
+	
 text_all db 'This int, but not 13.'
 len_all	dw	$ - text_all
 
@@ -29,7 +30,8 @@ len_int13	dw	$ - text_int13
 text_int9 db 'It is int 9!'
 len_int9	dw	$ - text_int9
 
-		
+text_s_kodom	db	'Int with error code.'
+len_s_kodom	dw	$ - text_s_kodom
 _start:	
 	mov	ax, 0204h
 	mov	cx, 0002h
@@ -38,6 +40,9 @@ _start:
 	int	013h
 	jc	_error
 
+	mov	ax,3	; ochistka ekrana
+	int 10h
+	
 	cli
 	lgdt	[gdt_table]
 	lidt	[idt_table]
@@ -72,6 +77,11 @@ _1:
 _2:
 ;	int	13
 ;	int 14
+	mov	ax,flag
+	cmp	 ax,1
+	je	_2
+	mov	[flag],ax
+	int 8
 	jmp	_2
 	
 _error:
@@ -94,7 +104,20 @@ int_all:
 	pop	si
 	pop	cx
 	iret
-
+int_s_kodom_oshibki:
+	push	cx
+	push	si
+	mov	cx, [len_s_kodom] 
+	mov	si, text_s_kodom
+	call	print
+	pop	si
+	pop	cx
+	pop	ax		; kod oshibki... 
+				;15-3 - ,biti selectora, vizvavshego int
+				;2 - TI, 1 esli prichia v LDT , 0 - GDT
+				;1 - IDT, 1 esli prichina - descriptor v IDT
+				;0 - EXT, 1 esli pichina - apparatnoe prerivanie
+	iret
 int_13:
 	push	cx
 	push	si
@@ -147,26 +170,44 @@ buffer:
 		db	055h, 0AAh
 
 IDT:
-		%rep 9
+		%rep 8
 			dw	int_all
 			dw	08h
 			db 	00h, 10000110b, 00h, 00h
 
 		%endrep
+			dw int_s_kodom_oshibki	; int 8 so smescheniem
+			dw 08h
+			db 00h, 10000110b, 00h, 00h
+		
 			dw int_9
 			dw 08h
 			db 00h, 10000110b, 00h, 00h
-		%rep 3
-			dw	int_all
-			dw	08h
-			db 	00h, 10000110b, 00h, 00h
 
-		%endrep
-			dw int_13
+			dw int_s_kodom_oshibki	; int 0Ah
 			dw 08h
 			db 00h, 10000110b, 00h, 00h
 
-		%rep 242
+			dw	int_all	; int 0Bh
+			dw	08h
+			db 	00h, 10000110b, 00h, 00h
+
+		%rep 3
+			dw int_s_kodom_oshibki	; int 0Ch - 0Eh
+			dw 08h
+			db 00h, 10000110b, 00h, 00h
+		%endrep
+		
+		%rep 2
+			dw	int_all		; 0Fh - 10h
+			dw	08h
+			db 	00h, 10000110b, 00h, 00h
+		%endrep
+			dw int_s_kodom_oshibki	; int 11h
+			dw 08h
+			db 00h, 10000110b, 00h, 00h
+
+		%rep 256 - (17+1)
 			dw int_all
 			dw 08h
 			db 00h, 10000110b, 00h, 00h
